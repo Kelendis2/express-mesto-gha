@@ -1,8 +1,8 @@
 const Card = require("../models/card");
 
-const ERROR_CODE = 400;
-const BAD_REQUEST_CODE = 400;
-const INTERNAL_CODE = 500;
+//const ERROR_CODE = 400;
+//const BAD_REQUEST_CODE = 400;
+//const INTERNAL_CODE = 500;
 
 const createCard = (req, res) => {
   const { name, link, owner, likes, createdAt } = req.body;

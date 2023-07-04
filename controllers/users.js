@@ -1,8 +1,8 @@
 const User = require("../models/user");
 
-const ERROR_CODE = 400;
-const BAD_REQUEST_CODE = 400;
-const INTERNAL_CODE = 500;
+//const ERROR_CODE = 400;
+//const BAD_REQUEST_CODE = 400;
+//const INTERNAL_CODE = 500;
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
