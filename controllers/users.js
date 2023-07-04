@@ -6,7 +6,7 @@ const INTERNAL_CODE = 500;
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
+  User.create({ name, about, avatar }, { new: true, runValidators: true })
     .then((user) => {
       res.send(user);
     })
