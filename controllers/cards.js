@@ -1,25 +1,22 @@
-const Card = require("../models/card");
+const Card = require('../models/card');
 
-//const ERROR_CODE = 400;
-//const BAD_REQUEST_CODE = 400;
-//const INTERNAL_CODE = 500;
+const ERROR_CODE = 400;
+const BAD_REQUEST_CODE = 400;
+const INTERNAL_CODE = 500;
 
 const createCard = (req, res) => {
   const { name, link, owner, likes, createdAt } = req.body;
-  Card.create(
-    { name, link, owner, likes, createdAt },
-    { new: true, runValidators: true }
-  )
+  Card.create( { name, link, owner, likes, createdAt }, { new: true, runValidators: true })
     .then((card) => {
       res.send(card);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST_CODE).send({
-          message: "Переданы некорректные данные при создании карточки.",
+          message: 'Переданы некорректные данные при создании карточки.',
         });
       } else {
-        res.status(INTERNAL_CODE).send({ message: "Ошибка по умолчанию." });
+        res.status(INTERNAL_CODE).send({ message: 'Ошибка по умолчанию.' });
       }
     });
 };
@@ -29,8 +26,8 @@ const getCards = (req, res) => {
     .then((cards) => {
       res.send(cards);
     })
-    .catch((err) => {
-      res.status(INTERNAL_CODE).send({ message: "Ошибка по умолчанию." });
+    .catch(() => {
+      res.status(INTERNAL_CODE).send({ message: 'Ошибка по умолчанию.' });
     });
 };
 
@@ -41,49 +38,45 @@ const deleteCard = (req, res) => {
       if (!card._id) {
         res
           .status(ERROR_CODE)
-          .send({ massage: "Запрашиваемая карточка не найдена" });
+          .send({ massage: 'Запрашиваемая карточка не найдена' });
       }
       res.send(card);
     })
-    .catch((err) => {
-      res.status(INTERNAL_CODE).send({ message: "Ошибка по умолчанию." });
+    .catch(() => {
+      res.status(INTERNAL_CODE).send({ message: 'Ошибка по умолчанию.' });
     });
 };
 const likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
-    { new: true, runValidators: true }
-  )
+    { $addToSet: { likes: req.user._id } }, { new: true, runValidators: true })
     .then((card) => {
       res.send(card);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === 'ValidationError') {
         res
           .status(BAD_REQUEST_CODE)
-          .send({ message: "Данные преданны некоректно" });
+          .send({ message: 'Данные преданны некоректно' });
       } else {
-        res.status(INTERNAL_CODE).send({ message: "Ошибка по умолчанию." });
+        res.status(INTERNAL_CODE).send({ message: 'Ошибка по умолчанию.' });
       }
     });
 };
 const dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $pull: { likes: req.user._id } },
-    { new: true, runValidators: true }
-  )
+    { $pull: { likes: req.user._id } }, { new: true, runValidators: true })
     .then((card) => {
       res.send(card);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === 'ValidationError') {
         res
           .status(BAD_REQUEST_CODE)
-          .send({ message: "Данные переданны некоректно" });
+          .send({ message: 'Данные переданны некоректно' });
       } else {
-        res.status(INTERNAL_CODE).send({ message: "Ошибка по умолчанию." });
+        res.status(INTERNAL_CODE).send({ message: 'Ошибка по умолчанию.' });
       }
     });
 };
