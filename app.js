@@ -1,11 +1,12 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
-const app = express();
-const usersRouter = require("./routes/users");
-const cardsRouter = require("./routes/cards");
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 
-mongoose.connect("mongodb://localhost:27017/mestodb ");
+const app = express();
+const usersRouter = require('./routes/users');
+const cardsRouter = require('./routes/cards');
+
+mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use(bodyParser.json());
 
@@ -17,12 +18,10 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/users", usersRouter);
+app.use('/users', usersRouter);
 
-app.use("/cards", cardsRouter);
-
-
+app.use('/cards', cardsRouter);
 
 app.listen(3000, () => {
-  console.log("Сервер запущен!");
+  console.log('Сервер запущен!');
 });
