@@ -36,7 +36,7 @@ const getUser = (req, res) => {
     .then((user) => {
       if (!user) {
         res
-          .status(ERROR_CODE)
+          .status(BAD_REQUEST_CODE)
           .send({ massage: 'Запрашиваемый пользователь не найден' });
       }
       res.send(user);
@@ -53,7 +53,7 @@ const updateProfileInfo = (req, res) => {
     .then((user) => {
       if (!user) {
         res
-          .status(ERROR_CODE)
+          .status(BAD_REQUEST_CODE)
           .send({ massage: 'Запрашиваемый пользователь не найден' });
       }
       res.send(user);
