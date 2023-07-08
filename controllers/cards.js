@@ -6,7 +6,7 @@ const INTERNAL_CODE = 500;
 
 const createCard = (req, res) => {
   const {name, link, owner, likes, createdAt} = req.body;
-  Card.create( { name, link, owner, likes, createdAt }, { new: true, runValidators: true })
+  Card.create( { name, link, owner, likes, createdAt })
     .then((card) => {
       res.send(card);
     })
