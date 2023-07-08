@@ -39,7 +39,7 @@ const getUser = (req, res) => {
       if (!user) {
         res
           .status(ERROR_CODE)
-          .send({ massage: 'Запрашиваемый пользователь не найден' });
+          .send({ message: 'Запрашиваемый пользователь не найден' });
       }
       res.send(user);
     })
