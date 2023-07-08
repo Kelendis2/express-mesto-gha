@@ -1,4 +1,6 @@
+const { ValidationError, CastError } = require('mongoose').Error;
 const Card = require('../models/card');
+
 
 const ERROR_CODE = 404;
 const BAD_REQUEST_CODE = 400;
@@ -6,12 +8,12 @@ const INTERNAL_CODE = 500;
 
 const createCard = (req, res) => {
   const {name, link, owner, likes, createdAt} = req.body;
-  Card.create( { name, link, owner, likes, createdAt })
+  Card.create({ name, link, owner, likes, createdAt })
     .then((card) => {
       res.send(card);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof ValidationError) {
         res.status(BAD_REQUEST_CODE).send({
           message: 'Переданы некорректные данные при создании карточки.',
         });
@@ -49,7 +51,7 @@ const deleteCard = (req, res) => {
 const likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: req.user._id } }, { new: true, runValidators: true })
+    { $addToSet: { likes: req.params.userId } }, { new: true, runValidators: true })
     .then((card) => {
       res.send(card);
     })
@@ -66,7 +68,7 @@ const likeCard = (req, res) => {
 const dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $pull: { likes: req.user._id } }, { new: true, runValidators: true })
+    { $pull: { likes: req.params.userId } }, { new: true, runValidators: true })
     .then((card) => {
       res.send(card);
     })
