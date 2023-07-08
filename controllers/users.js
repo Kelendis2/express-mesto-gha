@@ -1,3 +1,5 @@
+const { ValidationError, CastError } = require('mongoose').Error;
+
 const User = require('../models/user');
 
 const ERROR_CODE = 404;
@@ -11,7 +13,7 @@ const createUser = (req, res) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof ValidationError) {
         res.status(BAD_REQUEST_CODE).send({ message: 'Переданы некорректные данные при создании пользователя.' });
       } else {
         res.status(INTERNAL_CODE).send({ message: 'Ошибка по умолчанию.' });
@@ -36,7 +38,7 @@ const getUser = (req, res) => {
     .then((user) => {
       if (!user) {
         res
-          .status(BAD_REQUEST_CODE)
+          .status(ERROR_CODE)
           .send({ massage: 'Запрашиваемый пользователь не найден' });
       }
       res.send(user);
@@ -49,17 +51,17 @@ const getUser = (req, res) => {
 const updateProfileInfo = (req, res) => {
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate( req.user._id, { name, about }, { new: true, runValidators: true })
+  User.findByIdAndUpdate( req.params.userId, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         res
-          .status(BAD_REQUEST_CODE)
+          .status(ERROR_CODE)
           .send({ massage: 'Запрашиваемый пользователь не найден' });
       }
       res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof ValidationError || err instanceof CastError) {
         res
           .status(BAD_REQUEST_CODE)
           .send({ message: 'Данные введены некоректно' });
@@ -73,12 +75,12 @@ const updateProfileInfo = (req, res) => {
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate( req.user._id, { avatar }, { new: true, runValidators: true })
+  User.findByIdAndUpdate( req.params.userId, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof ValidationError || err instanceof CastError) {
         res
           .status(BAD_REQUEST_CODE)
           .send({ message: 'Данные введены некоректно' });

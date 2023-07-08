@@ -10,7 +10,7 @@ const cardSchema = new mongoose.Schema({
 
   link: {
     type: String,
-    require: true,
+    required: true,
   },
 
   owner: {
@@ -31,3 +31,5 @@ const cardSchema = new mongoose.Schema({
 const Card = mongoose.model('card', cardSchema);
 
 module.exports = Card;
+
+
