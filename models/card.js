@@ -31,5 +31,3 @@ const cardSchema = new mongoose.Schema({
 const Card = mongoose.model('card', cardSchema);
 
 module.exports = Card;
-
-

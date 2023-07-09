@@ -1,14 +1,17 @@
 const { ValidationError, CastError } = require('mongoose').Error;
+const { BAD_REQUEST_CODE, ERROR_NOT_FOUND, INTERNAL_CODE } = require('../utils/constants');
 const Card = require('../models/card');
 
 
-const ERROR_CODE = 404;
-const BAD_REQUEST_CODE = 400;
-const INTERNAL_CODE = 500;
-
 const createCard = (req, res) => {
-  const {name, link, owner, likes, createdAt} = req.body;
-  Card.create({ name, link, owner, likes, createdAt })
+  const {
+    name, link, owner, likes, createdAt,
+  } = req.body;
+  Card.create(
+    {
+      name, link, owner, likes, createdAt,
+    },
+  )
     .then((card) => {
       res.send(card);
     })
@@ -39,7 +42,7 @@ const deleteCard = (req, res) => {
     .then((card) => {
       if (!card._id) {
         res
-          .status(ERROR_CODE)
+          .status(ERROR_NOT_FOUND)
           .send({ massage: 'Запрашиваемая карточка не найдена' });
       }
       res.send(card);
@@ -51,7 +54,9 @@ const deleteCard = (req, res) => {
 const likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: req.user._id } }, { new: true, runValidators: true })
+    { $addToSet: { likes: req.user._id } },
+    { new: true, runValidators: true },
+  )
     .then((card) => {
       res.send(card);
     })
@@ -68,7 +73,9 @@ const likeCard = (req, res) => {
 const dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $pull: { likes: req.user._id } }, { new: true, runValidators: true })
+    { $pull: { likes: req.user._id } },
+    { new: true, runValidators: true },
+  )
     .then((card) => {
       res.send(card);
     })
@@ -83,4 +90,6 @@ const dislikeCard = (req, res) => {
     });
 };
 
-module.exports = { createCard, getCards, deleteCard, likeCard, dislikeCard };
+module.exports = {
+  createCard, getCards, deleteCard, likeCard, dislikeCard,
+};
