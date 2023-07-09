@@ -60,6 +60,7 @@ const deleteCard = (req, res) => {
     });
 };
 const likeCard = (req, res) => {
+  const { cardId } = req.params;
   const { _id } = req.user;
   Card.findByIdAndUpdate(
     req.params.cardId,
@@ -67,6 +68,11 @@ const likeCard = (req, res) => {
     { new: true, runValidators: true },
   )
     .then((card) => {
+      if (!cardId) {
+        res
+          .status(ERROR_NOT_FOUND)
+          .send({ massage: 'Запрашиваемая карточка не найдена' });
+      }
       res
         .status(STATUS_OK)
         .send(card);
