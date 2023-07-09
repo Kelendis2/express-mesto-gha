@@ -72,7 +72,7 @@ const likeCard = (req, res) => {
         .send(card);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof ValidationError || err instanceof CastError) {
         res
           .status(BAD_REQUEST_CODE)
           .send({ message: 'Данные преданны некоректно' });
