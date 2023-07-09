@@ -12,7 +12,7 @@ const createCard = (req, res) => {
     },
   )
     .then((card) => {
-      res.send(card);
+      res.status(STATUS_OK).send(card);
     })
     .catch((err) => {
       if (err instanceof ValidationError) {
@@ -28,7 +28,7 @@ const createCard = (req, res) => {
 const getCards = (req, res) => {
   Card.find({})
     .then((cards) => {
-      res.send(cards);
+      res.status(STATUS_OK).send(cards);
     })
     .catch(() => {
       res.status(INTERNAL_CODE).send({ message: 'Ошибка по умолчанию.' });
@@ -44,7 +44,7 @@ const deleteCard = (req, res) => {
           .status(ERROR_NOT_FOUND)
           .send({ massage: 'Запрашиваемая карточка не найдена' });
       }
-      res.send(card);
+      res.status(STATUS_OK).send(card);
     })
     .catch(() => {
       res.status(INTERNAL_CODE).send({ message: 'Ошибка по умолчанию.' });
