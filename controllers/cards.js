@@ -43,20 +43,22 @@ const getCards = (req, res) => {
 const deleteCard = (req, res) => {
   const { cardId } = req.params;
   Card.findByIdAndRemove(cardId)
+    .orFail(new Error(INVAILD_ID))
     .then((card) => {
-      if (!cardId) {
-        res
-          .status(ERROR_NOT_FOUND)
-          .send({ message: 'Запрашиваемая карточка не найдена' });
-      }
       res
         .status(STATUS_OK)
         .send(card);
     })
-    .catch(() => {
-      res
-        .status(INTERNAL_CODE)
-        .send({ message: 'Ошибка по умолчанию.' });
+    .catch((err) => {
+      if (err.message === INVAILD_ID) {
+        res
+          .status(ERROR_NOT_FOUND)
+          .send({ message: 'Запрашиваемая карточка не найдена' });
+      } else {
+        res
+          .status(INTERNAL_CODE)
+          .send({ message: 'Ошибка по умолчанию.' });
+      }
     });
 };
 const likeCard = (req, res) => {
