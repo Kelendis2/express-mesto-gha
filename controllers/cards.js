@@ -12,7 +12,7 @@ const createCard = (req, res) => {
         .send(card);
     })
     .catch((err) => {
-      if (err instanceof CastError) {
+      if (err instanceof ValidationError) {
         // eslint-disable-next-line no-console
         console.log(err);
         res
