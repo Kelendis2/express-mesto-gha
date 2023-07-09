@@ -54,6 +54,10 @@ const deleteCard = (req, res) => {
         res
           .status(ERROR_NOT_FOUND)
           .send({ message: 'Запрашиваемая карточка не найдена' });
+      } else if (err.name === 'CastError') {
+        res
+          .status(BAD_REQUEST_CODE)
+          .send({ message: 'Данные переданны некоректно' });
       } else {
         res
           .status(INTERNAL_CODE)
