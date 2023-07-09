@@ -31,7 +31,7 @@ const getCards = (req, res) => {
       res.send(cards);
     })
     .catch((err) => {
-      if (err.name === CastError) {
+      if (err instanceof CastError) {
         res
           .status(BAD_REQUEST_CODE)
           .send({ message: 'Данные переданны некоректно' });
