@@ -96,13 +96,18 @@ const dislikeCard = (req, res) => {
     { $pull: { likes: _id } },
     { new: true, runValidators: true },
   )
+    .orFail(new Error(INVAILD_ID))
     .then((card) => {
       res
         .status(STATUS_OK)
         .send(card);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.message === INVAILD_ID) {
+        res
+          .status(ERROR_NOT_FOUND)
+          .send({ message: 'Запрашиваемая карточка не найдена' });
+      } else if (err.name === 'CastError') {
         res
           .status(BAD_REQUEST_CODE)
           .send({ message: 'Данные переданны некоректно' });
