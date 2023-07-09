@@ -3,6 +3,7 @@ const BAD_REQUEST_CODE = 400;
 const ERROR_ACCESS = 403;
 const ERROR_NOT_FOUND = 404;
 const INTERNAL_CODE = 500;
+const INVAILD_ID = 'NotValidId';
 
 module.exports = {
   BAD_REQUEST_CODE,
@@ -10,4 +11,5 @@ module.exports = {
   INTERNAL_CODE,
   STATUS_OK,
   ERROR_ACCESS,
+  INVAILD_ID,
 };

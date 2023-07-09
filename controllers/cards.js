@@ -1,5 +1,5 @@
 const { ValidationError, CastError } = require('mongoose').Error;
-const { BAD_REQUEST_CODE, ERROR_NOT_FOUND, INTERNAL_CODE, STATUS_OK } = require('../utils/constants');
+const { BAD_REQUEST_CODE, ERROR_NOT_FOUND, INTERNAL_CODE, STATUS_OK, INVAILD_ID } = require('../utils/constants');
 const Card = require('../models/card');
 
 const createCard = (req, res) => {
@@ -12,7 +12,7 @@ const createCard = (req, res) => {
         .send(card);
     })
     .catch((err) => {
-      if (err instanceof ValidationError) {
+      if (err instanceof CastError) {
         // eslint-disable-next-line no-console
         console.log(err);
         res
@@ -66,12 +66,8 @@ const likeCard = (req, res) => {
     { $addToSet: { likes: _id } },
     { new: true, runValidators: true },
   )
+    .orFail(new Error(INVAILD_ID))
     .then((card) => {
-      if (req.params.cardId === 'CastError') {
-        res
-          .status(ERROR_NOT_FOUND)
-          .send({ massage: 'Запрашиваемая карточка не найдена' })
-      }
       res
         .status(STATUS_OK)
         .send(card);
@@ -88,6 +84,7 @@ const likeCard = (req, res) => {
       }
     });
 };
+
 const dislikeCard = (req, res) => {
   const { _id } = req.user;
   Card.findByIdAndUpdate(
