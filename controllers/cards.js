@@ -1,5 +1,5 @@
 const { ValidationError, CastError } = require('mongoose').Error;
-const { BAD_REQUEST_CODE, ERROR_NOT_FOUND, INTERNAL_CODE } = require('../utils/constants');
+const { BAD_REQUEST_CODE, ERROR_NOT_FOUND, INTERNAL_CODE, STATUS_OK } = require('../utils/constants');
 const Card = require('../models/card');
 
 const createCard = (req, res) => {
@@ -58,7 +58,7 @@ const likeCard = (req, res) => {
     { new: true, runValidators: true },
   )
     .then((card) => {
-      res.send(card);
+      res.status(STATUS_OK).send(card);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -78,7 +78,7 @@ const dislikeCard = (req, res) => {
     { new: true, runValidators: true },
   )
     .then((card) => {
-      res.send(card);
+      res.status(STATUS_OK).send(card);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
