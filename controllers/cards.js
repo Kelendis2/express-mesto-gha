@@ -30,14 +30,8 @@ const getCards = (req, res) => {
     .then((cards) => {
       res.send(cards);
     })
-    .catch((err) => {
-      if (err instanceof CastError) {
-        res
-          .status(BAD_REQUEST_CODE)
-          .send({ message: 'Данные переданны некоректно' });
-      } else {
-        res.status(INTERNAL_CODE).send({ message: 'Ошибка по умолчанию.' });
-      }
+    .catch(() => {
+      res.status(INTERNAL_CODE).send({ message: 'Ошибка по умолчанию.' });
     });
 };
 
