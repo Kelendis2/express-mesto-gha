@@ -47,7 +47,7 @@ const deleteCard = (req, res) => {
       if (!cardId) {
         res
           .status(ERROR_NOT_FOUND)
-          .send({ massage: 'Запрашиваемая карточка не найдена' });
+          .send({ message: 'Запрашиваемая карточка не найдена' });
       }
       res
         .status(STATUS_OK)
@@ -76,7 +76,7 @@ const likeCard = (req, res) => {
       if (err.message === INVAILD_ID) {
         res
           .status(ERROR_NOT_FOUND)
-          .send({ massage: 'Запрашиваемая карточка не найдена' });
+          .send({ message: 'Запрашиваемая карточка не найдена' });
       } else if (err.name === 'CastError') {
         res
           .status(BAD_REQUEST_CODE)
