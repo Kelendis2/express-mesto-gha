@@ -73,7 +73,11 @@ const likeCard = (req, res) => {
         .send(card);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.message === INVAILD_ID) {
+        res
+          .status(ERROR_NOT_FOUND)
+          .send({ massage: 'Запрашиваемая карточка не найдена' });
+      } else if (err.name === 'CastError') {
         res
           .status(BAD_REQUEST_CODE)
           .send({ message: 'Данные преданны некоректно' });
