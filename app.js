@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '64a85bbe77b797d7c979bcfd'
+    _id: '64a85b2e77b797d7c979bcf9'
   };
 
   next();
@@ -23,5 +23,6 @@ app.use('/users', usersRouter);
 app.use('/cards', cardsRouter);
 
 app.listen(3000, () => {
+  // eslint-disable-next-line no-console
   console.log('Сервер запущен!');
 });

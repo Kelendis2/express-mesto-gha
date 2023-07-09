@@ -68,8 +68,9 @@ const getUsers = (req, res) => {
 
 const updateProfileInfo = (req, res) => {
   const { name, about } = req.body;
+  const { _id } = req.user;
 
-  User.findByIdAndUpdate(req.params.userId, { name, about }, { new: true, runValidators: true })
+  User.findByIdAndUpdate({ _id }, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         res
@@ -102,6 +103,8 @@ const updateAvatar = (req, res) => {
           .status(BAD_REQUEST_CODE)
           .send({ message: 'Запрашиваемый пользователь не найден' });
       }
+      // eslint-disable-next-line no-console
+      console.log(user);
       res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
