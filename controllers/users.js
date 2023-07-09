@@ -95,8 +95,9 @@ const updateProfileInfo = (req, res) => {
 // new
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
+  const { _id } = req.user;
 
-  User.findByIdAndUpdate(req.params.userId, { avatar }, { new: true, runValidators: true })
+  User.findByIdAndUpdate({ _id }, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         res
