@@ -1,6 +1,6 @@
 const { ValidationError, CastError } = require('mongoose').Error;
 
-const { BAD_REQUEST_CODE, ERROR_NOT_FOUND, INTERNAL_CODE } = require('../utils/constants');
+const { BAD_REQUEST_CODE, ERROR_NOT_FOUND, INTERNAL_CODE,STATUS_OK } = require('../utils/constants');
 
 const User = require('../models/user');
 
@@ -11,7 +11,7 @@ const getUser = (req, res) => {
     .then((user) => {
       if (!user) {
         res
-          .status(BAD_REQUEST_CODE)
+          .status(ERROR_NOT_FOUND)
           .send({ message: 'Запрашиваемый пользователь не найден' });
       }
       res.send(user);
@@ -76,7 +76,7 @@ const updateProfileInfo = (req, res) => {
           .status(ERROR_NOT_FOUND)
           .send({ massage: 'Запрашиваемый пользователь не найден' });
       }
-      res.send(user);
+      res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
       if (err instanceof ValidationError || err instanceof CastError) {
@@ -102,7 +102,7 @@ const updateAvatar = (req, res) => {
           .status(BAD_REQUEST_CODE)
           .send({ message: 'Запрашиваемый пользователь не найден' });
       }
-      res.send(user);
+      res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
       if (err instanceof ValidationError || err instanceof CastError) {
