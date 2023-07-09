@@ -1,4 +1,4 @@
-const STATUS_OK = 201;
+const STATUS_OK = 200;
 const BAD_REQUEST_CODE = 400;
 const ERROR_ACCESS = 403;
 const ERROR_NOT_FOUND = 404;

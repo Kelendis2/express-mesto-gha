@@ -76,7 +76,7 @@ const updateProfileInfo = (req, res) => {
           .status(ERROR_NOT_FOUND)
           .send({ massage: 'Запрашиваемый пользователь не найден' });
       }
-      res.status(STATUS_OK).send(user);
+      res.status(STATUS_OK).json(user);
     })
     .catch((err) => {
       if (err instanceof ValidationError || err instanceof CastError) {
@@ -102,7 +102,7 @@ const updateAvatar = (req, res) => {
           .status(BAD_REQUEST_CODE)
           .send({ message: 'Запрашиваемый пользователь не найден' });
       }
-      res.status(STATUS_OK).send(user);
+      res.status(STATUS_OK).json(user);
     })
     .catch((err) => {
       if (err instanceof ValidationError || err instanceof CastError) {
