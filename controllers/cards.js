@@ -2,7 +2,6 @@ const { ValidationError, CastError } = require('mongoose').Error;
 const { BAD_REQUEST_CODE, ERROR_NOT_FOUND, INTERNAL_CODE } = require('../utils/constants');
 const Card = require('../models/card');
 
-
 const createCard = (req, res) => {
   const {
     name, link, owner, likes, createdAt,
@@ -31,16 +30,22 @@ const getCards = (req, res) => {
     .then((cards) => {
       res.send(cards);
     })
-    .catch(() => {
-      res.status(INTERNAL_CODE).send({ message: 'Ошибка по умолчанию.' });
+    .catch((err) => {
+      if (err.name === CastError) {
+        res
+          .status(BAD_REQUEST_CODE)
+          .send({ message: 'Данные переданны некоректно' });
+      } else {
+        res.status(INTERNAL_CODE).send({ message: 'Ошибка по умолчанию.' });
+      }
     });
 };
 
 const deleteCard = (req, res) => {
-  const { id } = req.params;
-  Card.findByIdAndRemove(id)
+  const { cardId } = req.params;
+  Card.findByIdAndRemove(cardId)
     .then((card) => {
-      if (!card._id) {
+      if (!cardId) {
         res
           .status(ERROR_NOT_FOUND)
           .send({ massage: 'Запрашиваемая карточка не найдена' });
@@ -52,9 +57,10 @@ const deleteCard = (req, res) => {
     });
 };
 const likeCard = (req, res) => {
+  const { _id } = req.user;
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
+    { $addToSet: { likes: _id } },
     { new: true, runValidators: true },
   )
     .then((card) => {
@@ -71,9 +77,10 @@ const likeCard = (req, res) => {
     });
 };
 const dislikeCard = (req, res) => {
+  const { _id } = req.user;
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $pull: { likes: req.user._id } },
+    { $pull: { likes: _id } },
     { new: true, runValidators: true },
   )
     .then((card) => {
