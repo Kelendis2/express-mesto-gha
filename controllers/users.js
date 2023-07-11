@@ -1,6 +1,8 @@
 const { ValidationError, CastError } = require('mongoose').Error;
 
-const { BAD_REQUEST_CODE, ERROR_NOT_FOUND, INTERNAL_CODE,STATUS_OK } = require('../utils/constants');
+const {
+  BAD_REQUEST_CODE, ERROR_NOT_FOUND, INTERNAL_CODE, STATUS_OK,
+} = require('../utils/constants');
 
 const User = require('../models/user');
 
@@ -21,8 +23,7 @@ const getUser = (req, res) => {
         res
           .status(BAD_REQUEST_CODE)
           .send({ message: 'Переданы некорректные данные.' });
-      }
-      else {
+      } else {
         res
           .status(INTERNAL_CODE)
           .send({ message: 'Ошибка по умолчанию.' });

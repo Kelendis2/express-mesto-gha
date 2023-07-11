@@ -1,5 +1,7 @@
-const { ValidationError, CastError } = require('mongoose').Error;
-const { BAD_REQUEST_CODE, ERROR_NOT_FOUND, INTERNAL_CODE, STATUS_OK, INVAILD_ID } = require('../utils/constants');
+const { ValidationError } = require('mongoose').Error;
+const {
+  BAD_REQUEST_CODE, ERROR_NOT_FOUND, INTERNAL_CODE, STATUS_OK, INVAILD_ID,
+} = require('../utils/constants');
 const Card = require('../models/card');
 
 const createCard = (req, res) => {
