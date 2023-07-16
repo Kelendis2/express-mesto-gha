@@ -1,4 +1,6 @@
 const { ValidationError, CastError } = require('mongoose').Error;
+const bcrypt = require('bcryptjs');
+const jsonWebToken = require('jsonwebtoken');
 
 const {
   BAD_REQUEST_CODE, ERROR_NOT_FOUND, INTERNAL_CODE, STATUS_OK,
@@ -32,10 +34,15 @@ const getUser = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  bcrypt.hash(String(password), 10)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
     .then((user) => {
-      res.send(user);
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err instanceof ValidationError) {
@@ -122,10 +129,39 @@ const updateAvatar = (req, res) => {
     });
 };
 
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+  User.findOne({ email })
+    .select('+password')
+    .orFail(new Error('Пользователь не найден'))
+    .then((user) => {
+      bcrypt.compare(String(password), user.password)
+        .then((isValidUser) => {
+          if (isValidUser) {
+            const jwt = jsonWebToken.sign({
+              // eslint-disable-next-line no-underscore-dangle
+              _id: user._id,
+            }, 'SECRET');
+            res.cookie('jwt', jwt, {
+              maxAge: 36000,
+              httpOnly: true,
+              sameSite: true,
+            });
+            res.send({ data: user.toJSON() });
+          } else {
+            res.status(403)
+              .send({ message: 'Неверный логин или пароль' });
+          }
+        });
+    })
+    .catch(next);
+};
+
 module.exports = {
   createUser,
   getUsers,
   getUser,
   updateAvatar,
   updateProfileInfo,
+  login,
 };
