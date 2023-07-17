@@ -1,3 +1,4 @@
+const JWT_SECRET = '64b47cd7d12efe505db55667';
 const STATUS_OK = 200;
 const BAD_REQUEST_CODE = 400;
 const ERROR_ACCESS = 403;
@@ -12,4 +13,5 @@ module.exports = {
   STATUS_OK,
   ERROR_ACCESS,
   INVAILD_ID,
+  JWT_SECRET,
 };

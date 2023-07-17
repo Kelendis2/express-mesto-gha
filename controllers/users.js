@@ -1,9 +1,9 @@
 const { ValidationError, CastError } = require('mongoose').Error;
 const bcrypt = require('bcryptjs');
-const jsonWebToken = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
 const {
-  BAD_REQUEST_CODE, ERROR_NOT_FOUND, INTERNAL_CODE, STATUS_OK,
+  BAD_REQUEST_CODE, ERROR_NOT_FOUND, INTERNAL_CODE, STATUS_OK, JWT_SECRET,
 } = require('../utils/constants');
 
 const User = require('../models/user');
@@ -74,6 +74,11 @@ const getUsers = (req, res) => {
     });
 };
 
+const getActivUser = (req, res, next) => {
+  const { _id } = req.user;
+  User.findById(req, res, next, _id);
+};
+
 const updateProfileInfo = (req, res) => {
   const { name, about } = req.body;
   const { _id } = req.user;
@@ -138,16 +143,13 @@ const login = (req, res, next) => {
       bcrypt.compare(String(password), user.password)
         .then((isValidUser) => {
           if (isValidUser) {
-            const jwt = jsonWebToken.sign({
-              // eslint-disable-next-line no-underscore-dangle
-              _id: user._id,
-            }, 'SECRET');
-            res.cookie('jwt', jwt, {
+            // eslint-disable-next-line no-underscore-dangle
+            const token = jwt.sign({ _id: user._id }, JWT_SECRET);
+            res.cookie('token', token, {
               maxAge: 36000,
               httpOnly: true,
               sameSite: true,
-            });
-            res.send({ data: user.toJSON() });
+            }).send({ data: user.toJSON() });
           } else {
             res.status(403)
               .send({ message: 'Неверный логин или пароль' });
@@ -163,5 +165,6 @@ module.exports = {
   getUser,
   updateAvatar,
   updateProfileInfo,
+  getActivUser,
   login,
 };
