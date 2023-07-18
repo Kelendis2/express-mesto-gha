@@ -98,8 +98,9 @@ const login = (req, res, next) => {
       bcrypt.compare(String(password), user.password)
         .then((isValidUser) => {
           if (isValidUser) {
+            const { _id } = req.cookies;
             // eslint-disable-next-line no-underscore-dangle
-            const token = jwt.sign({ _id: user._id }, JWT_SECRET);
+            const token = jwt.sign({ _id }, JWT_SECRET);
             res.cookie('token', token, {
               maxAge: 36000,
               httpOnly: true,
