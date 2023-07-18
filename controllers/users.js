@@ -1,9 +1,10 @@
 const { ValidationError, CastError } = require('mongoose').Error;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { STATUS_OK, JWT_SECRET } = require('../utils/constants');
+const { STATUS_OK, JWT_SECRET, ERROR_CODE_UNIQUE } = require('../utils/constants');
 const BadRequest = require('../utils/errors/BadRequest');
 const NotFound = require('../utils/errors/NotFound');
+const NotUnique = require('../utils/errors/NotFound');
 
 const User = require('../models/user');
 
@@ -36,7 +37,15 @@ const createUser = (req, res, next) => {
     .then((user) => {
       res.send({ data: user });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.code === ERROR_CODE_UNIQUE) {
+        next(new NotUnique('Пользователь с такой почтой уже зарегистрирован'));
+      } else if (err instanceof ValidationError) {
+        next(new BadRequest('Переданы некорректные данные при создании пользователя'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const updateProfileInfo = (req, res, next) => {
