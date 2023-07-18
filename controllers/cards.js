@@ -1,10 +1,11 @@
 const { ValidationError } = require('mongoose').Error;
-const {
-  BAD_REQUEST_CODE, ERROR_NOT_FOUND, INTERNAL_CODE, STATUS_OK, INVAILD_ID,
-} = require('../utils/constants');
+const { STATUS_OK, INVAILD_ID } = require('../utils/constants');
+const BadRequest = require('../utils/errors/BadRequest');
+const NotFound = require('../utils/errors/NotFound');
+
 const Card = require('../models/card');
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { _id } = req.user;
   const { name, link } = req.body;
   Card.create({ name, link, owner: _id })
@@ -15,34 +16,24 @@ const createCard = (req, res) => {
     })
     .catch((err) => {
       if (err instanceof ValidationError) {
-        // eslint-disable-next-line no-console
-        console.log(err);
-        res
-          .status(BAD_REQUEST_CODE)
-          .send({ message: 'Переданы некорректные данные при создании карточки.' });
+        next(new BadRequest('Переданы некорректные данные при создании карточки.'));
       } else {
-        res
-          .status(INTERNAL_CODE)
-          .send({ message: 'Ошибка по умолчанию.' });
+        next(err);
       }
     });
 };
 
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => {
       res
         .status(STATUS_OK)
         .send(cards);
     })
-    .catch(() => {
-      res
-        .status(INTERNAL_CODE)
-        .send({ message: 'Ошибка по умолчанию.' });
-    });
+    .catch(next);
 };
 
-const deleteCard = (req, res) => {
+const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
   Card.findByIdAndRemove(cardId)
     .orFail(new Error(INVAILD_ID))
@@ -53,21 +44,15 @@ const deleteCard = (req, res) => {
     })
     .catch((err) => {
       if (err.message === INVAILD_ID) {
-        res
-          .status(ERROR_NOT_FOUND)
-          .send({ message: 'Запрашиваемая карточка не найдена' });
+        next(new NotFound('Запрашиваемая карточка не найдена'));
       } else if (err.name === 'CastError') {
-        res
-          .status(BAD_REQUEST_CODE)
-          .send({ message: 'Данные переданны некоректно' });
+        next(new BadRequest('Данные переданны некоректно'));
       } else {
-        res
-          .status(INTERNAL_CODE)
-          .send({ message: 'Ошибка по умолчанию.' });
+        next(err);
       }
     });
 };
-const likeCard = (req, res) => {
+const likeCard = (req, res, next) => {
   const { _id } = req.user;
   Card.findByIdAndUpdate(
     req.params.cardId,
@@ -82,22 +67,16 @@ const likeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.message === INVAILD_ID) {
-        res
-          .status(ERROR_NOT_FOUND)
-          .send({ message: 'Запрашиваемая карточка не найдена' });
+        next(new NotFound('Запрашиваемая карточка не найдена'));
       } else if (err.name === 'CastError') {
-        res
-          .status(BAD_REQUEST_CODE)
-          .send({ message: 'Данные преданны некоректно' });
+        next(new BadRequest('Данные переданны некоректно'));
       } else {
-        res
-          .status(INTERNAL_CODE)
-          .send({ message: 'Ошибка по умолчанию.' });
+        next(err);
       }
     });
 };
 
-const dislikeCard = (req, res) => {
+const dislikeCard = (req, res, next) => {
   const { _id } = req.user;
   Card.findByIdAndUpdate(
     req.params.cardId,
@@ -112,17 +91,11 @@ const dislikeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.message === INVAILD_ID) {
-        res
-          .status(ERROR_NOT_FOUND)
-          .send({ message: 'Запрашиваемая карточка не найдена' });
+        next(new NotFound('Запрашиваемая карточка не найдена'));
       } else if (err.name === 'CastError') {
-        res
-          .status(BAD_REQUEST_CODE)
-          .send({ message: 'Данные переданны некоректно' });
+        next(new BadRequest('Данные переданны некоректно'));
       } else {
-        res
-          .status(INTERNAL_CODE)
-          .send({ message: 'Ошибка по умолчанию.' });
+        next(err);
       }
     });
 };
