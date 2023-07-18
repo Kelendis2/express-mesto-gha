@@ -98,14 +98,20 @@ const login = (req, res, next) => {
       bcrypt.compare(String(password), user.password)
         .then((isValidUser) => {
           if (isValidUser) {
-            const { _id } = req.cookies;
-            // eslint-disable-next-line no-underscore-dangle
-            const token = jwt.sign({ _id }, JWT_SECRET);
-            res.cookie('token', token, {
-              maxAge: 36000,
-              httpOnly: true,
-              sameSite: true,
-            }).send({ data: user.toJSON() });
+            const { jwt: { token } = {} } = req.cookies;
+            if (token) {
+              const { _id } = jwt.verify(token, JWT_SECRET);
+              // eslint-disable-next-line no-underscore-dangle
+              const newToken = jwt.sign({ _id }, JWT_SECRET);
+              res.cookie('token', newToken, {
+                maxAge: 36000,
+                httpOnly: true,
+                sameSite: true,
+              }).send({ data: user.toJSON() });
+            } else {
+              res.status(403)
+                .send({ message: 'Требуется аутентификация' });
+            }
           } else {
             res.status(403)
               .send({ message: 'Неверный логин или пароль' });
