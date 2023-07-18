@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const auth = require('./middlewares/auth');
 const errorHandler = require('./middlewares/error');
+const { validateUserAuth, validateUserCreate } = require('./utils/validate');
 const {
   createUser,
   login,
@@ -13,15 +14,14 @@ const app = express();
 const userRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 
-
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(errorHandler);
 
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', validateUserAuth, login);
+app.post('/signup', validateUserCreate, createUser);
 app.use(auth);
 app.use('/users', userRouter);
 
