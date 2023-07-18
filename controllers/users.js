@@ -10,14 +10,14 @@ const User = require('../models/user');
 
 const getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.send(users))
+    .then((users) => res.status(STATUS_OK).send(users))
     .catch(next);
 };
 
 const getUser = (req, res, next, id) => {
   User.findById(id)
     .orFail(new NotFound(`Пользователь по указанному id: ${id} не найден`))
-    .then((user) => res.send(user))
+    .then((user) => res.status(STATUS_OK).send(user))
     .catch(next);
 };
 
@@ -35,7 +35,7 @@ const createUser = (req, res, next) => {
       name, about, avatar, email, password: hash,
     }))
     .then((user) => {
-      res.send({ data: user });
+      res.status(STATUS_OK).send({ data: user });
     })
     .catch((err) => {
       if (err.code === ERROR_CODE_UNIQUE) {
@@ -109,7 +109,7 @@ const login = (req, res, next) => {
                 maxAge: 36000,
                 httpOnly: true,
                 sameSite: true,
-              }).send({ data: user.toJSON() });
+              }).status(STATUS_OK).send({ data: user.toJSON() });
             } else {
               res.status(403)
                 .send({ message: 'Требуется аутентификация' });
