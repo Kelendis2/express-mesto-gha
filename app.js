@@ -19,7 +19,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-
 app.post('/signin', validateUserAuth, login);
 app.post('/signup', validateUserCreate, createUser);
 app.use(auth);
@@ -36,3 +35,7 @@ app.listen(3000, () => {
   // eslint-disable-next-line no-console
   console.log('Сервер запущен!');
 });
+
+// проверка
+// eslint-disable-next-line no-console
+console.log('Проверка!');
