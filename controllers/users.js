@@ -29,7 +29,7 @@ const getCurrentUser = (req, res, next) => {
 const createUser = (req, res, next) => {
   const { error } = validateUser.validate(req.body);
   if (error) {
-    next(new BadRequest('Переданы некорректные данные при создании пользователя.'));
+    throw new BadRequest(error.details[0].message);
   }
   const {
     name, about, avatar, email, password,
