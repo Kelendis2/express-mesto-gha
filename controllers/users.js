@@ -101,7 +101,6 @@ const login = (req, res, next) => {
             const { token } = req.cookies;
             if (token) {
               const { _id } = jwt.verify(token, JWT_SECRET);
-              // eslint-disable-next-line no-underscore-dangle
               const newToken = jwt.sign({ _id }, JWT_SECRET);
               res.cookie('token', newToken, {
                 maxAge: 36000,
