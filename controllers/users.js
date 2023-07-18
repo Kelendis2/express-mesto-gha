@@ -70,16 +70,16 @@ const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   const { _id } = req.user;
 
-  User.findByIdAndUpdate({ _id }, { avatar }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(_id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        next(new NotFound('Пользователь по указанному id не найден'));
+        throw new NotFound('Пользователь по указанному id не найден');
       }
-      res.status(STATUS_OK).send(user);
+      res.status(STATUS_OK).json(user);
     })
     .catch((err) => {
       if (err instanceof ValidationError || err instanceof CastError) {
-        next(new BadRequest('Данные введены некоректно'));
+        next(new BadRequest('Данные введены некорректно'));
       } else {
         next(err);
       }
@@ -98,7 +98,7 @@ const login = (req, res, next) => {
       bcrypt.compare(String(password), user.password)
         .then((isValidUser) => {
           if (isValidUser) {
-            const { jwt: { token } = {} } = req.cookies;
+            const { token } = req.cookies;
             if (token) {
               const { _id } = jwt.verify(token, JWT_SECRET);
               // eslint-disable-next-line no-underscore-dangle
