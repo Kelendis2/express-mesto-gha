@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const { STATUS_OK, JWT_SECRET } = require('../utils/constants');
 const BadRequest = require('../utils/errors/BadRequest');
 const NotFound = require('../utils/errors/NotFound');
-const { validateUser, validateUserID, validateUserAvatar } = require('../utils/validate');
 
 const User = require('../models/user');
 
@@ -27,10 +26,6 @@ const getCurrentUser = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const { error } = validateUser.validate(req.body);
-  if (error) {
-    throw new BadRequest(error.details[0].message);
-  }
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -41,13 +36,7 @@ const createUser = (req, res, next) => {
     .then((user) => {
       res.send({ data: user });
     })
-    .catch((err) => {
-      if (err instanceof ValidationError) {
-        next(new BadRequest('Переданы некорректные данные при создании пользователя.'));
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 };
 
 const updateProfileInfo = (req, res, next) => {
