@@ -18,7 +18,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(errorHandler);
+
 
 app.post('/signin', validateUserAuth, login);
 app.post('/signup', validateUserCreate, createUser);
@@ -26,6 +26,7 @@ app.use(auth);
 app.use('/users', userRouter);
 
 app.use('/cards', cardsRouter);
+app.use(errorHandler);
 
 app.use('/*', (req, res) => {
   res.status(404).send({ message: 'Такой страницы не существует' });
