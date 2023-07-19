@@ -3,7 +3,6 @@ const STATUS_OK = 200;
 const INVAILD_ID = 'NotValidId';
 const ERROR_CODE_UNIQUE = 11000;
 
-
 module.exports = {
   STATUS_OK,
   INVAILD_ID,
