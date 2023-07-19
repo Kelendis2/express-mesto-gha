@@ -14,16 +14,21 @@ const getUsers = (req, res, next) => {
     .catch(next);
 };
 
-const getUser = (req, res, next, id) => {
+const findById = (req, res, next, id) => {
   User.findById(id)
     .orFail(new NotFound(`Пользователь по указанному id: ${id} не найден`))
     .then((user) => res.status(STATUS_OK).send(user))
     .catch(next);
 };
 
+const getUser = (req, res, next) => {
+  const { userId } = req.params;
+  findById(req, res, next, userId);
+};
+
 const getCurrentUser = (req, res, next) => {
   const { _id } = req.user;
-  User.findById(req, res, next, _id);
+  findById(req, res, next, _id);
 };
 
 const createUser = (req, res, next) => {
@@ -102,9 +107,10 @@ const login = (req, res, next) => {
         .then((isValidUser) => {
           if (isValidUser) {
             const { token } = req.cookies;
-            if (token) {
-              const { _id } = jwt.verify(token, JWT_SECRET);
-              const newToken = jwt.sign({ _id }, JWT_SECRET);
+            if (!token) {
+              // const { _id } = jwt.verify(token, JWT_SECRET);
+              // eslint-disable-next-line no-underscore-dangle
+              const newToken = jwt.sign({ _id: user._id }, JWT_SECRET);
               res.cookie('token', newToken, {
                 maxAge: 36000,
                 httpOnly: true,
@@ -130,5 +136,6 @@ module.exports = {
   updateAvatar,
   updateProfileInfo,
   getCurrentUser,
+  findById,
   login,
 };
