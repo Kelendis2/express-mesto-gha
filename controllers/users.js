@@ -113,7 +113,7 @@ const login = (req, res, next) => {
               // eslint-disable-next-line no-underscore-dangle
               const newToken = jwt.sign({ _id: user._id }, JWT_SECRET);
               res.cookie('token', newToken, {
-                maxAge: 36000,
+                maxAge: 36000 * 24 * 7,
                 httpOnly: true,
                 sameSite: true,
               }).status(STATUS_OK).send({ data: user.toJSON() });
