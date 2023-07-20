@@ -37,7 +37,7 @@ const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  bcrypt.hash(String(password), 10)
+  return bcrypt.hash(String(password), 10)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
@@ -105,19 +105,12 @@ const login = (req, res, next) => {
       bcrypt.compare(String(password), user.password)
         .then((isValidUser) => {
           if (isValidUser) {
-            const { token } = req.cookies;
-            if (!token) {
-              // const { _id } = jwt.verify(token, JWT_SECRET);
-              // eslint-disable-next-line no-underscore-dangle
-              const newToken = jwt.sign({ _id: user._id }, JWT_SECRET);
-              res.cookie('token', newToken, {
-                maxAge: 36000 * 24 * 7,
-                httpOnly: true,
-                sameSite: true,
-              }).status(STATUS_OK).send({ data: user.toJSON() });
-            } else {
-              next(new ErrorAccess({ message: 'Требуется аутентификация' }));
-            }
+            const newToken = jwt.sign({ _id: user._id }, JWT_SECRET);
+            res.cookie('token', newToken, {
+              maxAge: 36000 * 24 * 7,
+              httpOnly: true,
+              sameSite: true,
+            }).status(STATUS_OK).send({ data: user.toJSON() });
           } else {
             next(new ErrorAccess({ message: 'Неверный логин или пароль' }));
           }
