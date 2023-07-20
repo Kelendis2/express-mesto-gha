@@ -6,6 +6,7 @@ const BadRequest = require('../utils/errors/BadRequest');
 const NotFound = require('../utils/errors/NotFound');
 const NotUnique = require('../utils/errors/ NotUnique');
 const ErrorAccess = require('../utils/errors/ErrorAccess');
+const Forbidden = require('../utils/errors/Forbidden');
 
 const User = require('../models/user');
 
@@ -97,9 +98,6 @@ const updateAvatar = (req, res, next) => {
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  if (!email || !password) {
-    res.status(403).send({ message: 'Введите данные' });
-  }
   User.findOne({ email })
     .select('+password')
     .orFail(new ErrorAccess('Пользователь не найден'))
@@ -118,12 +116,10 @@ const login = (req, res, next) => {
                 sameSite: true,
               }).status(STATUS_OK).send({ data: user.toJSON() });
             } else {
-              res.status(403)
-                .send({ message: 'Требуется аутентификация' });
+              next(new ErrorAccess({ message: 'Требуется аутентификация' }));
             }
           } else {
-            res.status(403)
-              .send({ message: 'Неверный логин или пароль' });
+            next(new ErrorAccess({ message: 'Неверный логин или пароль' }));
           }
         });
     })
