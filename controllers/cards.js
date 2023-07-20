@@ -36,12 +36,12 @@ const getCards = (req, res, next) => {
 
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  const { _id } = req.user;
+  const { userId } = req.params;
   Card.findById(cardId)
     .orFail(new NotFound('Карточка с указанным id не найдена '))
     // eslint-disable-next-line consistent-return
     .then((card) => {
-      if (card.owner.toString() !== _id) {
+      if (card.owner.toString() !== userId) {
         return Promise.reject(new Forbidden('У пользователя нет возможности удалять карточки других пользователей'));
       }
       return Card.deleteOne(card)

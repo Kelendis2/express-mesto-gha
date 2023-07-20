@@ -32,7 +32,7 @@ app.use('/cards', cardsRouter);
 app.use(errors());
 app.use(errorHandler);
 
- app.use('/*', (req, res) => {
+app.use('/*', (req, res) => {
   res.status(404).send({ message: 'Такой страницы не существует' });
 });
 

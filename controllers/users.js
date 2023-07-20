@@ -1,7 +1,7 @@
 const { ValidationError, CastError } = require('mongoose').Error;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { STATUS_OK, JWT_SECRET, ERROR_CODE_UNIQUE, BAD_REQUEST_CODE } = require('../utils/constants');
+const { STATUS_OK, JWT_SECRET, ERROR_CODE_UNIQUE } = require('../utils/constants');
 const BadRequest = require('../utils/errors/BadRequest');
 const NotFound = require('../utils/errors/NotFound');
 const NotUnique = require('../utils/errors/NotFound');
