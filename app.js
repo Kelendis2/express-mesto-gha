@@ -26,15 +26,14 @@ app.post('/signin', validateUserAuth, login);
 app.use(auth);
 
 app.use('/users', userRouter);
-
 app.use('/cards', cardsRouter);
-
-app.use(errorHandler);
-app.use(errors());
 
 app.use('/*', (req, res) => {
   res.status(404).send({ message: 'Такой страницы не существует' });
 });
+
+app.use(errors());
+app.use(errorHandler);
 
 app.listen(3000, () => {
   // eslint-disable-next-line no-console
