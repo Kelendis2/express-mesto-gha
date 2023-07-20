@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const { errors } = require('celebrate');
 const auth = require('./middlewares/auth');
 const errorHandler = require('./middlewares/error');
 const { validateUserAuth, validateUserCreate } = require('./utils/validate');
@@ -27,11 +28,13 @@ app.use(auth);
 app.use('/users', userRouter);
 
 app.use('/cards', cardsRouter);
+
+app.use(errors());
 app.use(errorHandler);
 
-app.use('/*', (req, res) => {
+/* app.use('/*', (req, res) => {
   res.status(404).send({ message: 'Такой страницы не существует' });
-});
+}); */
 
 app.listen(3000, () => {
   // eslint-disable-next-line no-console
