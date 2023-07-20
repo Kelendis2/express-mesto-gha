@@ -38,7 +38,7 @@ const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
   const { _id } = req.user;
   Card.findById(cardId)
-    .orFail(new NotFound('Карточка с указанным id не найдена '))
+    .orFail(new NotFound('Карточка с указанным id не найдена'))
     // eslint-disable-next-line consistent-return
     .then((card) => {
       if (card.owner.toString() !== _id) {
@@ -57,7 +57,7 @@ const likeCard = (req, res, next) => {
     { $addToSet: { likes: _id } },
     { new: true, runValidators: true },
   )
-    .orFail(new Error(INVAILD_ID))
+    .orFail(new NotFound({ message: 'Карточка с указанным id не найдена' }))
     .then((card) => {
       res
         .status(STATUS_OK)
@@ -81,7 +81,7 @@ const dislikeCard = (req, res, next) => {
     { $pull: { likes: _id } },
     { new: true, runValidators: true },
   )
-    .orFail(new Error(INVAILD_ID))
+    .orFail(new NotFound({ message: 'Карточка с указанным id не найдена' }))
     .then((card) => {
       res
         .status(STATUS_OK)

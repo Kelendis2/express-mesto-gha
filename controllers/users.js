@@ -1,25 +1,24 @@
 const { ValidationError, CastError } = require('mongoose').Error;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { STATUS_OK, JWT_SECRET, ERROR_CODE_UNIQUE } = require('../utils/constants');
+const { JWT_SECRET, ERROR_CODE_UNIQUE } = require('../utils/constants');
 const BadRequest = require('../utils/errors/BadRequest');
 const NotFound = require('../utils/errors/NotFound');
 const NotUnique = require('../utils/errors/ NotUnique');
 const ErrorAccess = require('../utils/errors/ErrorAccess');
-const Forbidden = require('../utils/errors/Forbidden');
 
 const User = require('../models/user');
 
 const getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.status(STATUS_OK).send(users))
+    .then((users) => res.send(users))
     .catch(next);
 };
 
 const findById = (req, res, next, id) => {
   User.findById(id)
     .orFail(new NotFound(`Пользователь по указанному id: ${id} не найден`))
-    .then((user) => res.status(STATUS_OK).send(user))
+    .then((user) => res.send(user))
     .catch(next);
 };
 
@@ -42,7 +41,7 @@ const createUser = (req, res, next) => {
       name, about, avatar, email, password: hash,
     }))
     .then((user) => {
-      res.status(STATUS_OK).send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.code === ERROR_CODE_UNIQUE) {
@@ -64,7 +63,7 @@ const updateProfileInfo = (req, res, next) => {
       if (!user) {
         next(new NotFound('Пользователь по указанному id не найден'));
       }
-      res.status(STATUS_OK).send(user);
+      res.send(user);
     })
     .catch((err) => {
       if (err instanceof ValidationError || err instanceof CastError) {
@@ -85,7 +84,7 @@ const updateAvatar = (req, res, next) => {
       if (!user) {
         throw new NotFound('Пользователь по указанному id не найден');
       }
-      res.status(STATUS_OK).json(user);
+      res.json(user);
     })
     .catch((err) => {
       if (err instanceof ValidationError || err instanceof CastError) {
@@ -110,7 +109,7 @@ const login = (req, res, next) => {
               maxAge: 36000 * 24 * 7,
               httpOnly: true,
               sameSite: true,
-            }).status(STATUS_OK).send({ data: user.toJSON() });
+            }).send({ data: user.toJSON() });
           } else {
             next(new ErrorAccess({ message: 'Неверный логин или пароль' }));
           }
