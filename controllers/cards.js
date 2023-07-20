@@ -36,26 +36,27 @@ const getCards = (req, res, next) => {
 
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  Card.findByIdAndRemove(cardId)
-    .orFail(new Error(INVAILD_ID))
-    .then((card) => {
-      const { userId } = req.params;
-      if (!card) {
-        next(new NotFound('Запрашиваемая карточка не найдена'));
-      }
-      if (card.owner.toString() !== userId) {
-        next(new Forbidden('У пользователя нет возможности удалять карточки других пользователей'));
-      }
+  const userId = req.user._id;
 
-      res
-        .status(STATUS_OK)
-        .send(card);
+  Card.findById(cardId)
+    .then((card) => {
+      if (!card) {
+        res.status(404).send({ message: 'Запрашиваемая карточка не найдена' });
+        return Promise.reject();
+      } if (card.owner.toString() !== userId) {
+        res.status(403).send({ message: 'У пользователя нет возможности удалять карточки других пользователей' });
+        return Promise.reject();
+      }
+      return Card.findByIdAndRemove(cardId);
+    })
+    .then((deletedCard) => {
+      if (deletedCard) {
+        res.status(200).send(deletedCard);
+      }
     })
     .catch((err) => {
-      if (err.message === INVAILD_ID) {
-        next(new NotFound('Запрашиваемая карточка не найдена'));
-      } else if (err.name === 'CastError') {
-        next(new BadRequest('Данные переданны некоректно'));
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Данные переданны некоректно' });
       } else {
         next(err);
       }
