@@ -41,10 +41,10 @@ const deleteCard = (req, res, next) => {
     .then((card) => {
       const { userId } = req.params;
       if (!card) {
-        throw new NotFound('Запрашиваемая карточка не найдена');
+        next(new NotFound('Запрашиваемая карточка не найдена'));
       }
       if (card.owner.toString() !== userId) {
-        throw new Forbidden('У пользователя нет возможности удалять карточки других пользователей');
+        next(new Forbidden('У пользователя нет возможности удалять карточки других пользователей'));
       }
 
       res
