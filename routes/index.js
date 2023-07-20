@@ -18,3 +18,5 @@ router.use('/cards', require('./cards'));
 router.use('*', (req, res, next) => {
   next(new NotFound('Такой страницы не существует'));
 });
+
+module.exports = router;
