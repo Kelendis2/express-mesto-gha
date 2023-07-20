@@ -43,10 +43,10 @@ const createUser = (req, res, next) => {
       res.status(STATUS_OK).send({ data: user });
     })
     .catch((err) => {
-      if (err.code === ERROR_CODE_UNIQUE) {
-        next(new NotUnique('Пользователь с такой почтой уже зарегистрирован'));
-      } else if (err instanceof ValidationError) {
+      if (err instanceof ValidationError) {
         next(new BadRequest('Переданы некорректные данные при создании пользователя'));
+      } else if (err.code === ERROR_CODE_UNIQUE) {
+        next(new NotUnique('Пользователь с такой почтой уже зарегистрирован'));
       } else {
         next(err);
       }
