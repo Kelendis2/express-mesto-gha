@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const { STATUS_OK, JWT_SECRET, ERROR_CODE_UNIQUE } = require('../utils/constants');
 const BadRequest = require('../utils/errors/BadRequest');
 const NotFound = require('../utils/errors/NotFound');
-const NotUnique = require('../utils/errors/NotFound');
+const NotUnique = require('../utils/errors/ NotUnique');
 const ErrorAccess = require('../utils/errors/ErrorAccess');
 
 const User = require('../models/user');
