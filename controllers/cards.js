@@ -36,31 +36,18 @@ const getCards = (req, res, next) => {
 
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  const userId = req.user._id;
-
+  const { _id } = req.user;
   Card.findById(cardId)
+    .orFail(new NotFound('Карточка с указанным id не найдена '))
+    // eslint-disable-next-line consistent-return
     .then((card) => {
-      if (!card) {
-        res.status(404).send({ message: 'Запрашиваемая карточка не найдена' });
-        return Promise.reject();
-      } if (card.owner.toString() !== userId) {
-        res.status(403).send({ message: 'У пользователя нет возможности удалять карточки других пользователей' });
-        return Promise.reject();
+      if (card.owner.toString() !== _id) {
+        return Promise.reject(new Forbidden('У пользователя нет возможности удалять карточки других пользователей'));
       }
-      return Card.findByIdAndRemove(cardId);
+      return Card.deleteOne(card)
+        .then(() => res.send({ message: 'Карточка удалена' }));
     })
-    .then((deletedCard) => {
-      if (deletedCard) {
-        res.status(200).send(deletedCard);
-      }
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Данные переданны некоректно' });
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 };
 
 const likeCard = (req, res, next) => {
