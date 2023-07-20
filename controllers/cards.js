@@ -2,6 +2,7 @@ const { ValidationError } = require('mongoose').Error;
 const { STATUS_OK, INVAILD_ID } = require('../utils/constants');
 const BadRequest = require('../utils/errors/BadRequest');
 const NotFound = require('../utils/errors/NotFound');
+const Forbidden = require('../utils/errors/Forbidden');
 
 const Card = require('../models/card');
 
@@ -38,6 +39,14 @@ const deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(cardId)
     .orFail(new Error(INVAILD_ID))
     .then((card) => {
+      const { userId } = req.params;
+      if (!card) {
+        throw new NotFound('Запрашиваемая карточка не найдена');
+      }
+      if (card.owner.toString() !== userId) {
+        throw new Forbidden('У пользователя нет возможности удалять карточки других пользователей');
+      }
+
       res
         .status(STATUS_OK)
         .send(card);
@@ -52,6 +61,7 @@ const deleteCard = (req, res, next) => {
       }
     });
 };
+
 const likeCard = (req, res, next) => {
   const { _id } = req.user;
   Card.findByIdAndUpdate(
